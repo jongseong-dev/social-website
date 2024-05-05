@@ -26,6 +26,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "account.apps.AccountConfig",  # 장고가 다른 app에 정의된 템플릿 대신 이 app의 템플릿을 사용하도록 설정
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -36,7 +37,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     # apps
-    "account.apps.AccountConfig",
 ]
 
 MIDDLEWARE = [
