@@ -8,4 +8,8 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     username = factory.Sequence(lambda n: f"user{n}")
     email = factory.LazyAttribute(lambda a: f"{a.username}@example.com")
-    password = factory.PostGenerationMethodCall("set_password", "password")
+
+    @classmethod
+    def _after_postgeneration(cls, instance, create, results=None):
+        instance.set_password(instance.password)
+        instance.save()
