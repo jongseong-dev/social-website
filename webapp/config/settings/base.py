@@ -121,6 +121,7 @@ REST_FRAMEWORK = {
 }
 
 # SMTP 서버 구성
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # 보낸 이메일을 console 창에 보여준다.
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "dlwhdtjd098@gmail.com")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
