@@ -133,3 +133,11 @@
 | EMAIL_USE_TLS       | True                  |
 
 # 프로젝트의 기능 소개
+
+## 사용자 인증 시스템
+
+### Middleware
+- AuthenticationMiddleware
+  - 세션을 사용해서 사용자와 요청(request)를 연결한다. 
+- SessionMiddleware
+  - 요청 간에 현재 세션을 처리한다. 
