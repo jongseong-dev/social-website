@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+
 import os
 from pathlib import Path
 
@@ -25,6 +26,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "account.apps.AccountConfig",  # 장고가 다른 app에 정의된 템플릿 대신 이 app의 템플릿을 사용하도록 설정
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -119,8 +121,17 @@ REST_FRAMEWORK = {
 }
 
 # SMTP 서버 구성
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # 보낸 이메일을 console 창에 보여준다.
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "dlwhdtjd098@gmail.com")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = os.environ.get("EMAIL_PORT", 587)
 EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", True)
+
+
+# AUTH SETTINGS
+LOGIN_REDIRECT_URL = (
+    "dashboard"  # 요청에 next 매개 변수가 없는 경우 성공적인 로그인 후 사용자를 리디렉션할 URL을 장고에게 알려준다.
+)
+LOGIN_URL = "login"
+LOGOUT_URL = "logout"

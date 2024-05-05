@@ -133,3 +133,34 @@
 | EMAIL_USE_TLS       | True                  |
 
 # 프로젝트의 기능 소개
+
+## 사용자 인증 시스템
+
+### Middleware
+- AuthenticationMiddleware
+  - 세션을 사용해서 사용자와 요청(request)를 연결한다. 
+- SessionMiddleware
+  - 요청 간에 현재 세션을 처리한다. 
+
+### 장고의 인증뷰
+
+- 장고는 인증을 처리하기 위해 다음과 같은 클래스 기반 뷰를 제공한다.
+  - LoginView
+    - 로그인 폼을 처리하고 사용자를 로그인시킨다.
+  - LogoutView
+    - 사용자를 로그아웃 시킨다.
+  - PaswordChangeView
+    - 사용자의 비밀번호를 변경한다.
+  - PasswordChangeDoneView
+    - 성공적인 패스워드 변경 후 사용자가 리디렉션되는 뷰
+  - PasswordResetView
+    - 사용자의 비밀번호를 재설정한다.
+    - 토큰으로 일회용 링크를 생성해서 사용자의 이메일 계정으로 보낸다.
+  - PasswordResetDoneView
+    - 사용자에게 패스워드 재설정 링크가 포함된 이메일이 전송되었음을 알린다.
+  - PasswordResetConfirmView
+    - 사용자가 새로운 패스워드를 설정할 수 있다.
+  - PasswordResetCompleteView
+    - 사용자가 패스워드를 성공적으로 재설정한 후 리디렉션되는 성공 뷰이다.
+    
+- `templates/registration`는 장고 인증 뷰에서 인증 템플릿이 있을 것으로 예상하는 기본 경로이다.
