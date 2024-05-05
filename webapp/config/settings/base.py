@@ -126,3 +126,11 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "dlwhdtjd098@gmail.com")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = os.environ.get("EMAIL_PORT", 587)
 EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", True)
+
+
+# AUTH SETTINGS
+LOGIN_REDIRECT_URL = (
+    "dashboard"  # 요청에 next 매개 변수가 없는 경우 성공적인 로그인 후 사용자를 리디렉션할 URL을 장고에게 알려준다.
+)
+LOGIN_URL = "login"
+LOGOUT_URL = "logout"
