@@ -5,7 +5,10 @@
     {% if form.errors %} <!-- 로그인에 실패하면 유효성 오류가 발생 -->
         <p>Your username and password didn't match. Please try again.</p>
     {% else %}
-        <p>Please, use the following form to log-in:</p>
+        <p>
+            Please, use the following form to log-in.
+            If you don't have an account, you can <a href="{% url "register" %}">register here</a>.
+        </p>
     {% endif %}
     <div class="login-form">
         <form method="post" action="{% url 'login' %}">
