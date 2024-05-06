@@ -43,4 +43,5 @@ urlpatterns = [
     path("", include("django.contrib.auth.urls")),  # 장고에서 제공하는 인증 URL include
     path("", views.dashboard, name="dashboard"),
     path("register/", views.register, name="register"),
+    path("edit/", views.edit, name="edit"),
 ]
