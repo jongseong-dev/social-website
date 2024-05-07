@@ -25,7 +25,7 @@ COPY --from=builder /mysite/requirements_test.txt /mysite/
 RUN pip install -r requirements_test.txt
 
 # 프로젝트 코드 복사
-COPY . /mysite
+COPY . .
 
 RUN chmod +x /mysite/entrypoint.sh
 ENTRYPOINT ["/mysite/entrypoint.sh"]
@@ -43,7 +43,7 @@ COPY --from=builder /mysite/requirements.txt /mysite/
 RUN pip install -r requirements.txt
 
 # 프로젝트 코드 복사
-COPY . /mysite
+COPY . .
 
 EXPOSE 8000
 
