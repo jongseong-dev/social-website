@@ -2,7 +2,7 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
-from webapp.account.factory import UserFactory
+from account.factory import UserFactory, ProfileFactory
 
 
 @pytest.fixture
@@ -18,6 +18,16 @@ def plain_password():
 @pytest.fixture
 def user(plain_password):
     return UserFactory.create(password=plain_password)
+
+
+@pytest.fixture
+def profile(user):
+    return ProfileFactory.create(user=user)
+
+
+@pytest.fixture
+def login(user, plain_password, client):
+    client.login(username=user.username, password=plain_password)
 
 
 @pytest.fixture
@@ -37,9 +47,15 @@ def register_user():
     )
 
 
+@pytest.fixture
+def edit_url():
+    return reverse("edit")
+
+
 @pytest.mark.django_db
-def test_get_dashboard_login_user(client, user, dashboard_url, plain_password):
-    client.login(username=user.username, password=plain_password)
+def test_get_dashboard_login_user(
+    login, client, user, dashboard_url, plain_password
+):
     response = client.get(dashboard_url)
     assert response.status_code == 200
     assert "account/dashboard.html" in [
@@ -47,6 +63,7 @@ def test_get_dashboard_login_user(client, user, dashboard_url, plain_password):
     ]
 
 
+@pytest.mark.django_db
 def test_dashboard_unauthenticated_user_redirect_login(client, dashboard_url):
     response = client.get(dashboard_url)
     assert response.status_code == 302
@@ -105,8 +122,39 @@ def test_dashboard_unauthenticated_user_redirect_login(client, dashboard_url):
     ],
 )
 @pytest.mark.django_db
-def test_register_form(client, register_url, register_user, data, template):
+def test_register(login, client, register_url, data, template):
     response = client.post(register_url, data)
-    response.user = register_user
     assert response.status_code == 200
     assert template in [template.name for template in response.templates]
+
+
+@pytest.mark.django_db
+def test_successful_profile_edit(login, profile, client, edit_url):
+    success_message = "Profile updated successfully"
+    response = client.post(
+        edit_url,
+        data={"username": "newusername", "email": "newemail@example.com"},
+    )
+    assert response.status_code == 200
+    assert success_message in response.content.decode()
+
+    empty_username_response = client.post(
+        edit_url, data={"username": "", "email": "newemail@example.com"}
+    )
+    assert empty_username_response.status_code == 200
+    assert success_message in empty_username_response.content.decode()
+
+    empty_email_response = client.post(
+        edit_url, data={"username": "newusername2", "email": ""}
+    )
+    assert empty_email_response.status_code == 200
+    assert success_message in empty_email_response.content.decode()
+
+
+@pytest.mark.django_db
+def test_edit_profile_without_login(profile, client, edit_url):
+    response = client.post(
+        edit_url,
+        data={"username": "newusername", "email": "newemail@example.com"},
+    )
+    assert "login" in response.url
