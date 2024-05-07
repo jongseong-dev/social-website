@@ -42,7 +42,7 @@ class UserEditForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data["email"]
         exclude_me_qs = User.objects.exclude(id=self.instance.id)
-        find_another_email_qs = exclude_me_qs.filter(id=self.instance.id)
+        find_another_email_qs = exclude_me_qs.filter(email=email)
         if find_another_email_qs.exists():
             raise forms.ValidationError("Email already exists.")
         return email
