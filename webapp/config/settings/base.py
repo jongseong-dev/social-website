@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     # libs
     "rest_framework",
     "django_filters",
+    "social_django",
     # apps
 ]
 
