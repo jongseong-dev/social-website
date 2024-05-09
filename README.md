@@ -194,4 +194,6 @@
 ## 소셜 인증하기
 - Facebook, Google, Twitter를 사용한 인증
   - OAuth 2.0 사용
+    - OAuth 2.0은 웹 사이트 또는 애플리케이션이 사용자를 대신해서 다른 웹 앱에서 호스팅하는 리소스에 액세스할 수 있도록 설계된 표준이다. 
+    - https://github.com/python-social-auth/social-app-django
   - SSO를 사용하기
