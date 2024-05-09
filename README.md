@@ -211,3 +211,18 @@
 127.0.0.1 mysite.com
 ```
 - 해당 설정을 한 뒤 Django에서 ALLOWED_HOSTS에 mysite.com을 추가하자.
+
+### 소셜 인증을 위한 HTTPS 연결 방법
+- 사용할 소셜 인증 방법 중 일부는 HTTPS 연결이 필요하다.
+- Django 개발 서버는 정식 서비스 용도가 아니기 떄문에 HTTPS를 통해 사이트를 제공할 수 없다.
+- Django 확장 패키지의 RunServerPlus 확장을 통한 소셜 인증 테스트를 하자
+  - 단 RunServerPlus는 개발 서버를 실행할 때만 사용해야 한다.
+  ```shell
+  poetry add django-extensions --group dev
+  poetry add werkzeug --group dev
+  poetry add pyOpenSSL --group dev 
+  ```
+  - 위의 패키지를 설치 한 뒤, 다음과 같이 실행하자.
+  ```shell
+  python manage.py runserver_plus --cert-file cert.crt
+  ```
