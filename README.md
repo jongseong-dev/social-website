@@ -190,3 +190,39 @@
 - 커스텀 인증 백엔드는 아래의 두 가지 메서드를 모두 구현하는 클래스를 작성하여 구현한다.
   - authenticate(): request 객체 및 사용자 자격 증명을 매개 변수로 사용한다. 자격 증명이 유효하면 user 객체를 반호나하고 그렇지 않으면 None을 반환
   - get_user(): 사용자 ID를 매개 변수로 취해서 user 객체를 반환해야 한다. 
+
+## 소셜 인증하기
+- Facebook, Google, Twitter를 사용한 인증
+  - OAuth 2.0 사용
+    - OAuth 2.0은 웹 사이트 또는 애플리케이션이 사용자를 대신해서 다른 웹 앱에서 호스팅하는 리소스에 액세스할 수 있도록 설계된 표준이다. 
+    - https://github.com/python-social-auth/social-app-django
+  - SSO를 사용하기
+
+### 개발환경에서 localhost 리다이렉션 하기
+- 여러 소셜 서비스는 인증에 성공한 후 사용자를 127.0.0.1 또는 localhost로 리디렉션하는 것을 허용하지 않는다.
+- URL 리디렉션을 위한 도메인 이름을 기대한다.
+- 로컬시스템에서는 도메인 설정을 위해 hosts를 수정하자.
+
+```shell
+# linux 또는 macOs 에서는 hosts 위치: /etc/hosts
+# windows 에서는 C:\Windows\System32\drivers\etc\hosts
+
+...
+127.0.0.1 mysite.com
+```
+- 해당 설정을 한 뒤 Django에서 ALLOWED_HOSTS에 mysite.com을 추가하자.
+
+### 소셜 인증을 위한 HTTPS 연결 방법
+- 사용할 소셜 인증 방법 중 일부는 HTTPS 연결이 필요하다.
+- Django 개발 서버는 정식 서비스 용도가 아니기 떄문에 HTTPS를 통해 사이트를 제공할 수 없다.
+- Django 확장 패키지의 RunServerPlus 확장을 통한 소셜 인증 테스트를 하자
+  - 단 RunServerPlus는 개발 서버를 실행할 때만 사용해야 한다.
+  ```shell
+  poetry add django-extensions --group dev
+  poetry add werkzeug --group dev
+  poetry add pyOpenSSL --group dev 
+  ```
+  - 위의 패키지를 설치 한 뒤, 다음과 같이 실행하자.
+  ```shell
+  python manage.py runserver_plus --cert-file cert.crt
+  ```
