@@ -197,3 +197,17 @@
     - OAuth 2.0은 웹 사이트 또는 애플리케이션이 사용자를 대신해서 다른 웹 앱에서 호스팅하는 리소스에 액세스할 수 있도록 설계된 표준이다. 
     - https://github.com/python-social-auth/social-app-django
   - SSO를 사용하기
+
+### 개발환경에서 localhost 리다이렉션 하기
+- 여러 소셜 서비스는 인증에 성공한 후 사용자를 127.0.0.1 또는 localhost로 리디렉션하는 것을 허용하지 않는다.
+- URL 리디렉션을 위한 도메인 이름을 기대한다.
+- 로컬시스템에서는 도메인 설정을 위해 hosts를 수정하자.
+
+```shell
+# linux 또는 macOs 에서는 hosts 위치: /etc/hosts
+# windows 에서는 C:\Windows\System32\drivers\etc\hosts
+
+...
+127.0.0.1 mysite.com
+```
+- 해당 설정을 한 뒤 Django에서 ALLOWED_HOSTS에 mysite.com을 추가하자.
