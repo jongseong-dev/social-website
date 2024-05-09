@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "social_django",
-    "django_extensions",
     # apps
 ]
 
