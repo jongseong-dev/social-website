@@ -53,6 +53,7 @@ MIDDLEWARE = [
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "account.authentication.EmailAuthBackend",
+    "social_core.backends.twitter.TwitterOAuth",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -144,3 +145,6 @@ LOGIN_REDIRECT_URL = (
 )
 LOGIN_URL = "login"
 LOGOUT_URL = "logout"
+# X-AUTH
+SOCIAL_AUTH_TWITTER_KEY = os.environ.get("SOCIAL_AUTH_TWITTER_KEY")
+SOCIAL_AUTH_TWITTER_SECRET = os.environ.get("SOCIAL_AUTH_TWITTER_SECRET")
