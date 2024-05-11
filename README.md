@@ -132,6 +132,14 @@
 | EMAIL_PORT          | 587                   |
 | EMAIL_USE_TLS       | True                  |
 
+### AUTH
+
+| 변수명                             | 기본값 | 비고                                    |
+|---------------------------------|-----|---------------------------------------|
+| SOCIAL_AUTH_TWITTER_KEY         | 없음  | Twitter OAtuth 2.0을 위한 API KEY        | 
+| SOCIAL_AUTH_TWITTER_SECRET    | 없음    | Twitter OAtuth 2.0을 위한 API SECRET KEY |
+
+
 # 프로젝트의 기능 소개
 
 ## 사용자 인증 시스템
@@ -226,3 +234,7 @@
   ```shell
   python manage.py runserver_plus --cert-file cert.crt
   ```
+  
+## X를 사용한 인증
+### 전제 조건
+- https://developer.twitter.com/ 에서 개발자 계정을 만든 뒤 app을 등록한다.
