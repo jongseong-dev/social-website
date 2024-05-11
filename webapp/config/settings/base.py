@@ -54,7 +54,7 @@ MIDDLEWARE = [
 AUTHENTICATION_BACKENDS = [
     "account.authentication.EmailAuthBackend",
     "social_core.backends.twitter.TwitterOAuth",
-    "social_core.backends.google.GoogleOAuth2"
+    "social_core.backends.google.GoogleOAuth2",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
