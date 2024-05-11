@@ -54,6 +54,7 @@ MIDDLEWARE = [
 AUTHENTICATION_BACKENDS = [
     "account.authentication.EmailAuthBackend",
     "social_core.backends.twitter.TwitterOAuth",
+    "social_core.backends.google.GoogleOAuth2"
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -148,6 +149,11 @@ LOGIN_REDIRECT_URL = (
 )
 LOGIN_URL = "login"
 LOGOUT_URL = "logout"
-# X-AUTH
+# X AUTH
 SOCIAL_AUTH_TWITTER_KEY = os.environ.get("SOCIAL_AUTH_TWITTER_KEY")
 SOCIAL_AUTH_TWITTER_SECRET = os.environ.get("SOCIAL_AUTH_TWITTER_SECRET")
+# GOOGLE AUTH
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
+    "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"
+)

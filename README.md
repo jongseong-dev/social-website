@@ -238,3 +238,7 @@
 ## X를 사용한 인증
 ### 전제 조건
 - https://developer.twitter.com/ 에서 개발자 계정을 만든 뒤 app을 등록한다.
+
+## google을 사용한 인증
+### 전제조건
+- https://console.cloud.google.com/ 에서 프로젝트를 만든 뒤, OAuth 2.0 클라이언트 ID를 만든다.
