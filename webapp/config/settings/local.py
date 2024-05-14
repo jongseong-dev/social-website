@@ -1,3 +1,5 @@
+import mimetypes
+
 from .base import *
 
 DEBUG = True
@@ -24,7 +26,6 @@ import socket
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -35,3 +36,7 @@ DATABASES = {
         "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
+
+
+mimetypes.add_type("applicaion/javascript", ".js", True)
+mimetypes.add_type("text/css", ".css", True)
