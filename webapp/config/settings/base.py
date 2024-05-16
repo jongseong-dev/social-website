@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "social_django",
+    "easy_thumbnails",
     # apps
     "images.apps.ImagesConfig",
 ]
@@ -196,3 +197,7 @@ SOCIAL_AUTH_PIPELINE = [
     # Update the user record with any changed info from the auth service.
     "social_core.pipeline.user.user_details",
 ]
+
+
+# 썸네일 디버깅 하기
+# THUMBNAIL_DEBUG = True  # 디버그 정보 얻기
