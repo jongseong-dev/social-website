@@ -110,3 +110,6 @@ class ImageCreateForm(forms.ModelForm):
     - JavaScript 코드는 북마크로 저장되므로 사용자가 북마크 바에 추가한 후에는 업데이트 할 수 없다. 
     - 이는 런처 스크립트를 구현해서 해결할 수 있다.
 
+
+## 이미지 써멘일 만들기
+- easy-thumbnails 라이브러리를 이용해서 사용자의 썸네일 만들기
