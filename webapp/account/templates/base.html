@@ -45,5 +45,12 @@
         {% block content %}
         {% endblock %}
     </div>
+<script>
+    // 초기 HTML 문서가 완전히 로드되고 DOM 계층 구조가 완전히 구성되면 발생하는 이벤트이다.
+    document.addEventListener("DOMContentLoaded", (event) => {
+        {% block domready %}
+        {% endblock %}
+    })
+</script>
 </body>
 </html>
