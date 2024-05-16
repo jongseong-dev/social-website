@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.http import require_POST
 
-from images.form import ImageCreateForm
+from images.forms import ImageCreateForm
 from images.models import Image
 
 
@@ -42,7 +42,7 @@ def image_detail(request, pk, slug):
 def image_like(request):
     image_id = request.POST.get("id")
     action = request.POST.get("action")
-    if image_id and action:
+    if image_id and action in ["like", "unlike"]:
         try:
             image = Image.objects.get(id=image_id)
             if action == "like":
