@@ -1,0 +1,16 @@
+{% load thumbnail %}
+{% for image in images %}
+  <div class="image">
+    <a href="{{ image.get_absolute_url }}">
+      {% thumbnail image.image 300x300 crop="smart" as im %}  {# crop = smart 은 엔트로피가 낮은 가장자리 부분을 제거해서 점진적으로 이미지를 요청된 크기로 자르라는 의미 #}
+      <a href="{{ image.get_absolute_url }}">
+        <img src="{{ im.url }}">
+      </a>
+    </a>
+    <div class="info">
+      <a href="{{ image.get_absolute_url }}" class="title">
+        {{ image.title }}
+      </a>
+    </div>
+  </div>
+{% endfor %}
