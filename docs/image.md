@@ -111,7 +111,7 @@ class ImageCreateForm(forms.ModelForm):
     - 이는 런처 스크립트를 구현해서 해결할 수 있다.
 
 
-## 이미지 써멘일 만들기
+## 이미지 썸네일 만들기
 - easy-thumbnails 라이브러리를 이용해서 사용자의 썸네일 만들기
 
 ## 비동기 액션 추가하기
@@ -128,3 +128,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 ```
 - DOM이 준비되면 실행되는 핸들러 안에는(`DOMContentLoaded`) domready라는 장고 템플릿 블록이 추가되어 있다.
 - base.html 템플릿을 확장한 모든 템플릿은 이 블록을 사용해서 DOM이 준비되었을 때 실행할 특정 JavaScript 코드를 포함할 수 있다.
+
+## 이미지 목록에 무한 스크롤 페이징
+
+- AJAX를 사용하여 무한 스크롤 페이징을 만들어보자
