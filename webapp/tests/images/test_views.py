@@ -40,6 +40,11 @@ def image(user):
 
 
 @pytest.fixture
+def images(user):
+    return ImageFactory.create_batch(10)
+
+
+@pytest.fixture
 def client():
     return Client()
 
@@ -116,4 +121,28 @@ def test_image_like_without_login(image, client, like_url):
     response = client.post(like_url, data={"id": image.id, "action": "like"})
     response.user = AnonymousUser()
     assert response.status_code == 302
+    assert "login" in response.url
+
+
+@pytest.mark.django_db
+def test_image_list_with_valid_page(login, client, images):
+    response = client.get("/images/?page=1")
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_image_list_with_invalid_page(login, client, images):
+    response = client.get("/images/?page=100")
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_image_list_with_images_only(login, client, images):
+    response = client.get("/images/?images_only=true")
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_image_list_without_login(client, images):
+    response = client.get("/images/")
     assert "login" in response.url

@@ -111,7 +111,7 @@ class ImageCreateForm(forms.ModelForm):
     - 이는 런처 스크립트를 구현해서 해결할 수 있다.
 
 
-## 이미지 써멘일 만들기
+## 이미지 썸네일 만들기
 - easy-thumbnails 라이브러리를 이용해서 사용자의 썸네일 만들기
 
 ## 비동기 액션 추가하기
@@ -128,3 +128,54 @@ document.addEventListener("DOMContentLoaded", (event) => {
 ```
 - DOM이 준비되면 실행되는 핸들러 안에는(`DOMContentLoaded`) domready라는 장고 템플릿 블록이 추가되어 있다.
 - base.html 템플릿을 확장한 모든 템플릿은 이 블록을 사용해서 DOM이 준비되었을 때 실행할 특정 JavaScript 코드를 포함할 수 있다.
+
+## 이미지 목록에 무한 스크롤 페이징
+
+- AJAX를 사용하여 무한 스크롤 페이징을 만들어보자
+### crop option 
+
+ - crop = smart 은 엔트로피가 낮은 가장자리 부분을 제거해서 점진적으로 이미지를 요청된 크기로 자르라는 의미
+
+`{% thumbnail image.image 300x300 crop="smart" as im %}`
+
+### 무한 스크롤 코드 
+
+```js
+
+  var page = 1; // 현재 페이지 번호를 저장
+  var emptyPage = false;
+  var blockRequest = false;
+
+  window.addEventListener('scroll', function(e) {  // scroll 이벤트를 캡처하고 이에 대한 핸들러 함수를 정의
+    // 문서의 전체 높이와 윈도우 내부 톺이의 차이를 구한다. 구한 값은 사용자가 스크롤 할 수 있는 문서의 남은 높이
+    // 이 높이가 200 픽셀에 가까워지면 페이지를 로드할 수 있도록 구한 값에서 200을 뺸다.
+    var margin = document.body.clientHeight - window.innerHeight - 200;
+
+    // 오프셋이 계산된 margin보다 큰지 확인
+    // 마지막 페이지에 도달한 것은 아닌지 확인
+    // 진행 중인 다른 HTTP 요청은 없는지 확인한다.
+    if(window.pageYOffset > margin && !emptyPage && !blockRequest) {
+      blockRequest = true; // 추가 HTTP 요청을 발생시키지 않도록 true 로 설정
+      page += 1;
+
+      fetch('?images_only=1&page=' + page)  // 전체 HTML 페이지 대신 이미지에 대한 HTML과 요청된 페이지 번호에 대한 페이지만 조회한다.
+      .then(response => response.text())
+      .then(html => {
+        if (html === '') {
+          // 사용자가 마지막 페이지에 있으며 빈 페이지의 조회 여부를 파악한다. 빈페이지가 조회되면 더 이상 결과가 없는 것으로 간주해서 추가적인 요청을 중지
+          emptyPage = true;
+        }
+        else {
+          var imageList = document.getElementById('image-list');
+          imageList.insertAdjacentHTML('beforeEnd', html);
+          blockRequest = false;
+        }
+      })
+    }
+  });
+
+  // Launch scroll event
+  const scrollEvent = new Event('scroll');
+  window.dispatchEvent(scrollEvent);
+
+```
