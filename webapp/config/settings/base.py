@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -201,3 +203,7 @@ SOCIAL_AUTH_PIPELINE = [
 
 # 썸네일 디버깅 하기
 # THUMBNAIL_DEBUG = True  # 디버그 정보 얻기
+
+ABSOLUTE_URL_OVERRIDES = {
+    "auth.user": lambda u: reverse_lazy("user_detail", args=[u.username])
+}  # get_absolute_url() 메서드를 오버라이드하는 또 다른 방법
