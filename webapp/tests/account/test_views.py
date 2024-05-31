@@ -52,6 +52,21 @@ def edit_url():
     return reverse("edit")
 
 
+@pytest.fixture
+def users():
+    return UserFactory.create_batch(10)
+
+
+@pytest.fixture
+def follow_url():
+    return reverse("user_follow")
+
+
+@pytest.fixture
+def user_list_url():
+    return reverse("user_list")
+
+
 @pytest.mark.django_db
 def test_get_dashboard_login_user(
     login, client, user, dashboard_url, plain_password
@@ -64,7 +79,7 @@ def test_get_dashboard_login_user(
 
 
 @pytest.mark.django_db
-def test_dashboard_unauthenticated_user_redirect_login(client, dashboard_url):
+def test_dashboard_user_redirect_login(client, dashboard_url):
     response = client.get(dashboard_url)
     assert response.status_code == 302
     expected_url = reverse("login") + "?next=" + dashboard_url
@@ -157,4 +172,56 @@ def test_edit_profile_without_login(profile, client, edit_url):
         edit_url,
         data={"username": "newusername", "email": "newemail@example.com"},
     )
+    assert "login" in response.url
+
+
+@pytest.mark.django_db
+def test_user_list_view(login, client, user_list_url):
+    response = client.get(user_list_url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_user_list_view_without_login(client, user_list_url):
+    response = client.get(user_list_url)
+    assert "login" in response.url
+
+
+@pytest.mark.django_db
+def test_user_detail_view(login, user, client):
+    response = client.get(f"/account/users/{user.username}/")
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_user_follow_view(login, users, client, follow_url):
+    response = client.post(
+        follow_url, data={"id": users[0].id, "action": "follow"}
+    )
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
+@pytest.mark.django_db
+def test_user_unfollow_view(login, users, client, follow_url):
+    response = client.post(
+        follow_url, data={"id": users[0].id, "action": "unfollow"}
+    )
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
+@pytest.mark.django_db
+def test_user_follow_view_with_invalid_id(login, client, follow_url):
+    response = client.post(follow_url, data={"id": 9999, "action": "follow"})
+    assert response.status_code == 200
+    assert response.json() == {"status": "error"}
+
+
+@pytest.mark.django_db
+def test_user_follow_view_without_login(users, client, follow_url):
+    response = client.post(
+        follow_url, data={"id": users[0].id, "action": "follow"}
+    )
+    assert response.status_code == 302
     assert "login" in response.url

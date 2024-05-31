@@ -144,3 +144,4 @@
 
 - [사용자 인증](docs/account.md)
 - [이미지 북마크](docs/image.md)
+- [사용자 활동 추적하기](docs/follow.md)

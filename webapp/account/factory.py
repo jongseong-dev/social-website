@@ -28,3 +28,11 @@ class ProfileFactory(factory.django.DjangoModelFactory):
         datetime.date(2000, 12, 31),
     )
     photo = factory.django.ImageField(filename="test.jpg")
+
+
+class ContactFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "account.Contact"
+
+    user_from = factory.SubFactory(UserFactory)
+    user_to = factory.SubFactory(UserFactory)
