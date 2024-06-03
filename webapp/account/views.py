@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 
+from actions.models import Action
 from actions.utils import create_action
 from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
 from .models import Profile, Contact
@@ -12,7 +13,19 @@ from .models import Profile, Contact
 
 @login_required
 def dashboard(request):
-    return render(request, "account/dashboard.html", {"section": "dashboard"})
+    # 기본적으로 모든 작업을 표시
+    actions = Action.objects.exclude(user=request.user)
+    following_ids = request.user.following.values_list("id", flat=True)
+
+    if following_ids:
+        # 사용자가 다른 사용자를 팔로우하는 경우, 해당 사용자의 작업만 검색
+        actions = actions.filter(user_id__in=following_ids)
+    actions = actions[:10]
+    return render(
+        request,
+        "account/dashboard.html",
+        {"section": "dashboard", "actions": actions},
+    )
 
 
 def register(request):
