@@ -20,7 +20,9 @@ def dashboard(request):
     if following_ids:
         # 사용자가 다른 사용자를 팔로우하는 경우, 해당 사용자의 작업만 검색
         actions = actions.filter(user_id__in=following_ids)
-    actions = actions[:10]
+    actions = actions.select_related("user", "user__profile").prefetch_related(
+        "target"
+    )[:10]
     return render(
         request,
         "account/dashboard.html",
