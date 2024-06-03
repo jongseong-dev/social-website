@@ -26,3 +26,28 @@
     - app_label: 모델이 속한 앱의 이름을 나타낸다.
     - model: 모델 클ㄹ스의 이름이다.
     - name: 사람이 읽을 수 있는 모델의 이름을 나타낸다
+
+### 활동스트림에서 중복 활동 피하기
+- 사용자가 좋아요 또는 싫어요 버튼을 여러 번 클릭하거나 단기간에 동일한 활동을 여러 번 수행할 수 있다.
+- 이를 방지하기 위해 중복된 활동을 건너뛰도록 create_action() 함수를 수정한다.
+```python
+def create_action(user, verb, target=None):
+    # 마지막 순간에 비슷한 활동이 있었는지 확인
+    now = timezone.now()
+    last_minute = now - timezone.timedelta(seconds=60)
+    similar_actions = Action.objects.filter(
+        user_id=user.id, verb=verb, created__gte=last_minute
+    )
+    if target:
+        target_ct = ContentType.objects.get_for_model(target)
+        similar_actions = similar_actions.filter(
+            target_ct=target_ct, target_id=target.id
+        )
+    if not similar_actions:
+        # 존재하는 활동이 발견되지 않은 경우
+        action = Action(user=user, verb=verb, target=target)
+        action.save()
+        return True
+
+    return False
+```
