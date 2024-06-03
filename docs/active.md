@@ -57,3 +57,12 @@ def create_action(user, verb, target=None):
 - 사용자가 이미지에 좋아요를 표시하는 행동
 - 사용자가 계정을 만드는 행동
 - 사용자가 다른 사용자를 팔로우하기 시작하는 행동
+
+### QuerySet 최적화하기
+- Action 객체를 조회할 때마다 관련 User 객체와 사용자의 Profile 객체를 불필요하게 접근하게 된다.
+- 이를 피하기 위해 `select_related`를 사용한다.
+- select_related는 `FK`와 `OneToOne` 필드를 위한 메서드이다.
+- 이 메서드는 **SQL Join**을 수행해서 관련된 객체의 필드들을 SELECT 문에 포함시키는 방식으로 작동한다.
+- select_related는 **다대다** 또는 다대일(ManyToMAny 또는 역관계의 FK 필드)에서는 작동하지 않는다.
+- `prefetch_related`를 사용해서 각 관계마다 별도로 조회하고 파이썬을 사용해서 결과를 조인한다.
+- 이 메서드는 GenericRelation과 GenericForeignKey의 프리패칭도 지원한다.
