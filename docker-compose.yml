@@ -11,6 +11,12 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5433:5432"
+  redis:
+    image: redis:7.2.5-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
   web:
     build:
       context: .
@@ -42,5 +48,6 @@ services:
       - DB_PORT=5432
     depends_on:
       - db
+      - redis
 volumes:
   blog_site_db_volume:
