@@ -112,15 +112,20 @@
 | DJANGO_SETTINGS_MODULE | 없음             |                                                         |
 | SECRET_KEY             | 94n7fx27pd-... | local 환경과 test 환경에서는 기본값을 사용하지만 <br/> prod에서는 주입해야 합니다. |
 
+
+
 ### DB
 
-| 변수명         | 기본값       |
-|-------------|-----------|
-| DB_NAME     | postgres  |
-| DB_USER     | postgres  |
-| DB_PASSWORD | postgres  |
-| DB_HOST     | localhost |
-| DB_PORT     | 5432      |
+| 변수명           | 기본값              |
+|---------------|------------------|
+| DB_NAME       | postgres         |
+| DB_USER       | postgres         |
+| DB_PASSWORD   | postgres         |
+| DB_HOST       | localhost        |
+| DB_PORT       | 5432             | 
+| REDIS_HOST    | localhost        | 
+| REDIS_PORT    | 6379             | 
+| REDIS_DB      | 0                | 
 
 ### EMAIL
 
