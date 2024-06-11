@@ -1,5 +1,3 @@
-import re
-
 import requests
 from django import forms
 from django.core.files.base import ContentFile
@@ -27,28 +25,25 @@ class ImageCreateForm(forms.ModelForm):
         return url
 
     def save(self, commit=True):
-        """
-        이미지를 request 모듈을 사용해 내려받아 저장한다.
-        Args:
-            commit:
-
-        Returns:
-
-        """
         image = super().save(commit=False)
         image_url = self.cleaned_data["url"]
         name = slugify(image.title)
         extension = image_url.rsplit(".", 1)[1].lower()
-        valid_extensions = ["jpg", "jpeg", "png"]
-        if extension.lower() in valid_extensions:
-            image_name = f"{re.sub(r'[^a-zA-Z0-9_-]', '_', name)}.{extension}"
-            image_name = f"{image_name}.{extension}"
-            response = requests.get(image_url)
-            image.image.save(
-                image_name, ContentFile(response.content), save=False
-            )
-            if commit:
-                image.save()
-            return image
-        else:
+        image_name = f"{name}.{extension}"
+
+        try:
+            response = requests.get(image_url, timeout=10)  # 타임아웃 설정
+            response.raise_for_status()  # 200 OK 응답이 아니면 에러 발생
+        except (requests.RequestException, ValueError):
+            # request 에러 또는 잘못된 URL에 대한 처리
             return None
+
+        # Content-Type이 이미지인지 확인
+        if "image" not in response.headers["Content-Type"]:
+            return None
+
+        image.image.save(image_name, ContentFile(response.content), save=False)
+
+        if commit:
+            image.save()
+        return image
