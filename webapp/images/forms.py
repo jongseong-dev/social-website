@@ -3,6 +3,7 @@ from django import forms
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
 
+from exceptions import InvalidImageException
 from images.models import Image
 
 
@@ -25,21 +26,25 @@ class ImageCreateForm(forms.ModelForm):
         return url
 
     def save(self, commit=True):
-        """
-        이미지를 request 모듈을 사용해 내려받아 저장한다.
-        Args:
-            commit:
-
-        Returns:
-
-        """
         image = super().save(commit=False)
         image_url = self.cleaned_data["url"]
         name = slugify(image.title)
         extension = image_url.rsplit(".", 1)[1].lower()
         image_name = f"{name}.{extension}"
-        response = requests.get(image_url)  # 이미지를 내려받는다.
+
+        try:
+            response = requests.get(image_url, timeout=10)  # 타임아웃 설정
+            response.raise_for_status()  # 200 OK 응답이 아니면 에러 발생
+        except (requests.RequestException, ValueError):
+            # request 에러 또는 잘못된 URL에 대한 처리
+            raise InvalidImageException("Could not download the image.")
+
+        # Content-Type이 이미지인지 확인
+        if "image" not in response.headers["Content-Type"]:
+            raise InvalidImageException("Not a valid image file.")
+
         image.image.save(image_name, ContentFile(response.content), save=False)
+
         if commit:
             image.save()
         return image

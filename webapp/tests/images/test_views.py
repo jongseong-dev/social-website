@@ -57,12 +57,13 @@ def login(user, plain_password, client):
 
 
 @pytest.mark.django_db
-def test_image_create_with_valid_data(login, client, create_url):
+@patch("images.forms.ImageCreateForm.save")
+def test_image_create_with_valid_data(mock, login, client, create_url):
+    mock.return_value = ImageFactory.build()
     response = client.post(
         create_url,
         data={"title": "New Image", "url": "http://example.com/new.jpg"},
     )
-
     assert response.status_code == 302
     assert "Image added successfully" in [
         str(m) for m in list(response.wsgi_request._messages)
@@ -70,17 +71,41 @@ def test_image_create_with_valid_data(login, client, create_url):
 
 
 @pytest.mark.django_db
-def test_image_create_with_invalid_data(login, client, create_url):
+def test_image_create_with_invalid_title(login, client, create_url):
     response = client.post(
-        create_url, data={"title": "", "url": "http://example.com/new.jpg"}
+        create_url, data={"title": "", "url": "http://example.com/new.png"}
     )
 
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
+def test_image_create_with_invalid_url(login, client, create_url):
+    response = client.post(
+        create_url,
+        data={"title": "Invalid Url", "url": "http://example.com/new.oo"},
+    )
+
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_image_create_with_invalid_download(login, client, create_url):
+    response = client.post(
+        create_url,
+        data={
+            "title": "Invalid Download",
+            "url": "http://example.com/new-test-image.png",
+        },
+    )
+
+    assert response.status_code == 200
+    assert "Could not download the image." in response.content.decode()
+
+
+@pytest.mark.django_db
 @patch("redis.Redis")
-def test_image_detail_with_existing_image(login, image, client):
+def test_image_detail_with_existing_image(mock, login, image, client):
     response = client.get(f"/images/detail/{image.id}/{image.slug}/")
 
     assert response.status_code == 200
@@ -88,7 +113,7 @@ def test_image_detail_with_existing_image(login, image, client):
 
 @pytest.mark.django_db
 @patch("redis.Redis")
-def test_image_detail_with_nonexistent_image(login, client):
+def test_image_detail_with_nonexistent_image(mock, login, client):
     response = client.get("/images/detail/9999/nonexistent/")
 
     assert response.status_code == 404
@@ -149,4 +174,24 @@ def test_image_list_with_images_only(login, client, images):
 @pytest.mark.django_db
 def test_image_list_without_login(client, images):
     response = client.get("/images/")
+    assert "login" in response.url
+
+
+@pytest.fixture
+def ranking_url():
+    return reverse("images:ranking")
+
+
+@pytest.mark.django_db
+@patch("redis.Redis")
+def test_image_ranking_view(mock, login, images, client, ranking_url):
+    response = client.get(ranking_url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+@patch("redis.Redis")
+def test_image_ranking_view_without_login(mock, images, client, ranking_url):
+    response = client.get(ranking_url)
+    assert response.status_code == 302
     assert "login" in response.url
