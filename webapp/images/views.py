@@ -97,3 +97,19 @@ def image_list(request):
         "images/image/list.html",
         {"section": "images", "images": images},
     )
+
+
+@login_required
+def image_ranking(request):
+    # 이미지 순위 딕셔너리 가져오기
+    # zrange 메소드는  조회할 멤버의 시작 인덱스와 끝 인덱스를 필요로 한다.
+    image_ranking_list = r.zrange("image_ranking", 0, -1, desc=True)[:10]
+    image_ranking_ids = [int(id_) for id_ in image_ranking_list]
+    # 가장 많이 조회된 이미지 가져오기
+    most_viewed = list(Image.objects.filter(id__in=image_ranking_ids))
+    most_viewed.sort(key=lambda x: image_ranking_ids.index(x.id))
+    return render(
+        request,
+        "images/image/ranking.html",
+        {"section": "images", "most_viewed": most_viewed},
+    )
