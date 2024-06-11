@@ -260,4 +260,9 @@ def image_detail(request, pk, slug):
         {"section": "images", "image": image, "total_views": total_views},
     )
 ```
- 
+
+
+## Redis에 랭킹 저장하기
+- 정렬된 셋인 `zincrby()` 메소드을 이용하자
+- 정렬된 셋은 점수를 가지는 중복되지 않는 문자열 컬렉션을 사용하자
+- 요소들은 점수에 따라 정렬된다.
