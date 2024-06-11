@@ -57,12 +57,13 @@ def login(user, plain_password, client):
 
 
 @pytest.mark.django_db
-def test_image_create_with_valid_data(login, client, create_url):
+@patch("images.forms.ImageCreateForm.save")
+def test_image_create_with_valid_data(mock, login, client, create_url):
+    mock.return_value = ImageFactory.build()
     response = client.post(
         create_url,
         data={"title": "New Image", "url": "http://example.com/new.jpg"},
     )
-
     assert response.status_code == 302
     assert "Image added successfully" in [
         str(m) for m in list(response.wsgi_request._messages)
@@ -70,12 +71,36 @@ def test_image_create_with_valid_data(login, client, create_url):
 
 
 @pytest.mark.django_db
-def test_image_create_with_invalid_data(login, client, create_url):
+def test_image_create_with_invalid_title(login, client, create_url):
     response = client.post(
-        create_url, data={"title": "", "url": "http://example.com/new.jpg"}
+        create_url, data={"title": "", "url": "http://example.com/new.png"}
     )
 
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_image_create_with_invalid_url(login, client, create_url):
+    response = client.post(
+        create_url,
+        data={"title": "Invalid Url", "url": "http://example.com/new.oo"},
+    )
+
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_image_create_with_invalid_download(login, client, create_url):
+    response = client.post(
+        create_url,
+        data={
+            "title": "Invalid Download",
+            "url": "http://example.com/new-test-image.png",
+        },
+    )
+
+    assert response.status_code == 200
+    assert "Could not download the image." in response.content.decode()
 
 
 @pytest.mark.django_db
