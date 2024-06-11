@@ -3,6 +3,7 @@ from django import forms
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
 
+from exceptions import InvalidImageException
 from images.models import Image
 
 
@@ -36,11 +37,11 @@ class ImageCreateForm(forms.ModelForm):
             response.raise_for_status()  # 200 OK 응답이 아니면 에러 발생
         except (requests.RequestException, ValueError):
             # request 에러 또는 잘못된 URL에 대한 처리
-            return None
+            raise InvalidImageException("Could not download the image.")
 
         # Content-Type이 이미지인지 확인
         if "image" not in response.headers["Content-Type"]:
-            return None
+            raise InvalidImageException("Not a valid image file.")
 
         image.image.save(image_name, ContentFile(response.content), save=False)
 

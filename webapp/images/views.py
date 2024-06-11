@@ -2,6 +2,7 @@ import redis
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -9,6 +10,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.http import require_POST
 
 from actions.utils import create_action
+from exceptions import InvalidImageException
 from images.forms import ImageCreateForm
 from images.models import Image
 
@@ -19,17 +21,21 @@ r = redis.Redis(
 
 @login_required
 def image_create(request):
-    if request.method == "POST":
-        form = ImageCreateForm(data=request.POST)
-        if form.is_valid():
-            new_image = form.save(commit=False)
-            new_image.user = request.user
-            new_image.save()
-            create_action(request.user, "bookmarked image", new_image)
-            messages.success(request, "Image added successfully")
-            return redirect(
-                new_image.get_absolute_url()
-            )  # 새로 생성된 이미지 상세 뷰로 리디렉션
+    try:
+        if request.method == "POST":
+            form = ImageCreateForm(data=request.POST)
+            if form.is_valid():
+                new_image = form.save(commit=False)
+                new_image.user = request.user
+                new_image.save()
+                create_action(request.user, "bookmarked image", new_image)
+                messages.success(request, "Image added successfully")
+                return redirect(
+                    new_image.get_absolute_url()
+                )  # 새로 생성된 이미지 상세 뷰로 리디렉션
+    except (InvalidImageException, ValidationError) as e:
+        messages.error(request, e.message)
+        pass
     form = ImageCreateForm(data=request.GET)
     return render(
         request,
