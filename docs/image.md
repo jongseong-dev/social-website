@@ -218,3 +218,46 @@ document.addEventListener("DOMContentLoaded", (event) => {
 ### 좋아요 역정규화
 - 이미지의 좋아요 총수를 요청마다 계산하는 것은 비효율적이다.
 - 따라서 이미지의 좋아요 수를 역정규화 시켜 필드에 넣는다. 
+
+## redis로 이미지 노출 카운트하기
+- redis는 다양한 유형의 데이터를 저장할 수 있는 키/값 데이터베이스이다.
+- redis는 모든 데이터를 메모리에 저장하지만, 데이터셋을 일정 시간마다 디스크에 덤프하거나 각 명령을 로그에 추가함으로써 영구적으로 저장할 수 이싿.
+- 강력한 명령을 제공하고 문자열, 해시, 리스트, 셋, 정렬된 셋 등 다양한 데이터 구조를 지원한다.
+
+### redis 설정하기
+
+- redis는 띄웠다고 가정
+
+- redis 설치하기
+```shell
+pip install redis
+```
+
+- settings.py에 redis 설정 추가하기
+```python
+# redis
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = os.getenv("REDIS_PORT", 6379)
+REDIS_DB = os.getenv("REDIS_DB", 0)
+```
+
+- views.py에 redis 사용하기
+```python
+r = redis.Redis(
+    host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB
+)
+
+
+def image_detail(request, pk, slug):
+    image = get_object_or_404(Image, pk=pk, slug=slug)
+    # 이미지의 총 조회수가 1씩 증가
+    total_views = r.incr(
+        f"image:{image.id}:views"
+    )  # object-type:id:field 형태로 저장
+    return render(
+        request,
+        "images/image/detail.html",
+        {"section": "images", "image": image, "total_views": total_views},
+    )
+```
+ 

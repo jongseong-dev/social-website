@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 from django.contrib.auth.models import AnonymousUser
 from django.test import Client
@@ -77,6 +79,7 @@ def test_image_create_with_invalid_data(login, client, create_url):
 
 
 @pytest.mark.django_db
+@patch("redis.Redis")
 def test_image_detail_with_existing_image(login, image, client):
     response = client.get(f"/images/detail/{image.id}/{image.slug}/")
 
@@ -84,6 +87,7 @@ def test_image_detail_with_existing_image(login, image, client):
 
 
 @pytest.mark.django_db
+@patch("redis.Redis")
 def test_image_detail_with_nonexistent_image(login, client):
     response = client.get("/images/detail/9999/nonexistent/")
 

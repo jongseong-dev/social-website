@@ -1,5 +1,3 @@
-import mimetypes
-
 from .base import *
 
 DEBUG = True
@@ -37,6 +35,8 @@ DATABASES = {
     }
 }
 
+if DEBUG:
+    import mimetypes
 
-mimetypes.add_type("applicaion/javascript", ".js", True)
-mimetypes.add_type("text/css", ".css", True)
+    mimetypes.add_type("application/javascript", ".js", True)
+    mimetypes.add_type("text/css", ".css", True)

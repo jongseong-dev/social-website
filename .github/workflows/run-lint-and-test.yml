@@ -15,6 +15,18 @@ jobs:
       matrix:
         python-version: [ 3.11 ]
     services:
+      redis:
+        # Docker Hub image
+        image: redis:7.2.5-alpine
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+            # Maps tcp port 6379 on the host to the service’s port 6379
+            - 6379:6379
       postgres:
         image: postgres:15.6-alpine3.19
         env:
@@ -56,5 +68,7 @@ jobs:
           PASSWORD: postgres
           HOST: localhost
           PORT: 5432
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
         run: |
           cd webapp && pytest
