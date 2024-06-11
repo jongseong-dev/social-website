@@ -44,6 +44,8 @@ def image_detail(request, pk, slug):
     total_views = r.incr(
         f"image:{image.id}:views"
     )  # object-type:id:field 형태로 저장
+    # 이미지 순위가 1씩 증가
+    r.zincrby("image_ranking", 1, image.id)
     return render(
         request,
         "images/image/detail.html",
