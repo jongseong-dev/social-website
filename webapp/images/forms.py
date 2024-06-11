@@ -1,3 +1,5 @@
+import re
+
 import requests
 from django import forms
 from django.core.files.base import ContentFile
@@ -37,9 +39,16 @@ class ImageCreateForm(forms.ModelForm):
         image_url = self.cleaned_data["url"]
         name = slugify(image.title)
         extension = image_url.rsplit(".", 1)[1].lower()
-        image_name = f"{name}.{extension}"
-        response = requests.get(image_url)  # 이미지를 내려받는다.
-        image.image.save(image_name, ContentFile(response.content), save=False)
-        if commit:
-            image.save()
-        return image
+        valid_extensions = ["jpg", "jpeg", "png"]
+        if extension.lower() in valid_extensions:
+            image_name = f"{re.sub(r'[^a-zA-Z0-9_-]', '_', name)}.{extension}"
+            image_name = f"{image_name}.{extension}"
+            response = requests.get(image_url)
+            image.image.save(
+                image_name, ContentFile(response.content), save=False
+            )
+            if commit:
+                image.save()
+            return image
+        else:
+            return None
